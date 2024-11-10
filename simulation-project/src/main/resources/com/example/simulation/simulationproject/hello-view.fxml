@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.PerspectiveCamera?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.effect.Shadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Sphere?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="326.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.simulation.simulationproject.controllers.HelloController">
+   <children>
+      <ImageView fx:id="GalaxyImage" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../images/galaxy.jpeg" />
+         </image>
+      </ImageView>
+      <Slider fx:id="mySlider" layoutX="121.0" layoutY="298.0" max="800.0" min="300.0" prefHeight="37.0" prefWidth="338.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" translateZ="5.0" />
+      <Sphere fx:id="Earth" layoutX="290.0" layoutY="153.0" radius="70.0">
+         <effect>
+            <Shadow>
+               <input>
+                  <Glow level="0.25" />
+               </input>
+            </Shadow>
+         </effect>
+      </Sphere>
+      <PerspectiveCamera fx:id="camera" farClip="10000.0" fieldOfView="46.8" layoutX="290.0" layoutY="163.0" nearClip="1.0" translateZ="-1000.0" />
+   </children>
+</AnchorPane>
