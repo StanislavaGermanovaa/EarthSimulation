@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.PhongMaterial;
@@ -34,11 +35,13 @@ public class HelloController {
     private Camera camera;
 
     private final SmartGroup world = new SmartGroup();
-    private double anchorX, anchorY;
-    private double anchorAngleX=0;
-    private double anchorAngleY=0;
-    private final DoubleProperty angleX=new SimpleDoubleProperty(0);
-    private final DoubleProperty angleY=new SimpleDoubleProperty(0);
+
+    private double mousePosX, mousePosY;
+    private double mouseOldX, mouseOldY;
+    private final Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
+    private final Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
+
+
     public Camera getCamera() {
         return camera;
     }
@@ -47,6 +50,7 @@ public class HelloController {
         setupEarthMaterial();
         setupSlider();
         world.getChildren().add(Earth);
+        Earth.getTransforms().addAll(rotateX, rotateY); // Add rotations to the sphere
         anchorPane.getChildren().add(world);
         initMouseControl(world, anchorPane);
         startRotationAnimation();
@@ -86,30 +90,38 @@ public class HelloController {
         timer.start();
     }
     private void initMouseControl(SmartGroup group, AnchorPane scene) {
-        Rotate xRotate;
-        Rotate yRotate;
+        scene.setOnMousePressed(this::handleMousePressed);
+        scene.setOnMouseDragged(this::handleMouseDragged);
 
-        group.getTransforms().addAll(
-                xRotate=new Rotate(0,Rotate.X_AXIS),
-                yRotate=new Rotate(0,Rotate.Y_AXIS)
-        );
-        xRotate.angleProperty().bind(angleX);
-        yRotate.angleProperty().bind(angleY);
-
-        scene.setOnMousePressed(event->{
-            anchorX=event.getSceneX();
-            anchorY=event.getSceneY();
-            anchorAngleX=angleX.get();
-            anchorAngleY=angleY.get();
-            System.out.println("work");
-        });
-        scene.setOnMouseDragged(mouseEvent -> {
-            angleX.set(anchorAngleX-(anchorY-mouseEvent.getSceneY()));
-            angleY.set(anchorAngleY + anchorX-mouseEvent.getSceneX());
-            System.out.println("right");
+        // Add smooth inertia for a better user experience
+        group.setOnScroll(scrollEvent -> {
+            double delta = scrollEvent.getDeltaY();
+            group.setTranslateZ(group.getTranslateZ() + delta);
         });
 
-    }}
+    }
+    // Capture initial mouse position on press
+    private void handleMousePressed(MouseEvent event) {
+        mouseOldX = event.getSceneX();
+        mouseOldY = event.getSceneY();
+    }
+
+    // Rotate the Earth based on mouse drag movement
+    private void handleMouseDragged(MouseEvent event) {
+        mousePosX = event.getSceneX();
+        mousePosY = event.getSceneY();
+
+        double deltaX = mousePosX - mouseOldX;
+        double deltaY = mousePosY - mouseOldY;
+
+        // Reverse the signs to change rotation direction
+        rotateY.setAngle(rotateY.getAngle() - deltaX * 0.3); // Inverted X-axis rotation
+        rotateX.setAngle(rotateX.getAngle() + deltaY * 0.3); // Inverted Y-axis rotation
+
+        mouseOldX = mousePosX;
+        mouseOldY = mousePosY;
+    }
+}
 
 
 

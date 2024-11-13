@@ -24,6 +24,7 @@ public class HelloApplication extends Application {
         HelloController controller = fxmlLoader.getController();
         scene.setCamera(controller.getCamera());
 
+
         stage.setTitle("Earth Simulation!");
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/earth.jpeg"))));
         stage.setScene(scene);
